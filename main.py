@@ -53,24 +53,26 @@ def main():
 
     fm = FMIndex()
 
+    # Get process id to measure taken memory
     pid = os.getpid()
     process = psutil.Process(pid)
 
-    bw, sa = fm.encode(text)
-    decoded = fm.decode(bw)
+    # Calculate SA, BWT and Tally matrix
+    fm.encode(text)
 
-    tally_step, sa_step = fm.get_steps()
     pattern_start_times = []
     pattern_end_times = []
     matches = []
 
+    # Search for each pattern in BWT and measure time taken
+    # and number of matches
     for pattern in patterns:
         match, start_time, end_time = fm.search(pattern)
         matches.append(len(match))
         pattern_start_times.append(start_time)
         pattern_end_times.append(end_time)
 
-    print_pattern_times(pattern_start_times, pattern_end_times, tally_step, sa_step, patterns, matches)
+    print_pattern_times(pattern_start_times, pattern_end_times, fm.tally_step, fm.sa_step, patterns, matches)
     print("\nMemory usage: {}MB".format(process.memory_info()[0] / 2. ** 20))
 
 

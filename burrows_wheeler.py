@@ -15,18 +15,43 @@ def bw_transform(t, sa):
 
 
 def bwt(input_string):
+    """
+    Calculate Suffix Array
+    :param input_string:
+    :return: Suffix Array
+    """
     data_ref = suffix_array(input_string)
 
+    # We add len(data_ref) at the beginning as it
+    # represents terminal value
     return [len(data_ref)] + data_ref
 
 
 def suffix_array(text, _step=1):
+    """
+        Analyze all common strings in the text.
+        Short substrings of the length _step a are first pre-sorted. The are the
+        results repeatedly merged so that the garanteed number of compared
+        characters bytes is doubled in every iteration until all substrings are
+        sorted exactly.
+        Arguments:
+            text:  The text to be analyzed.
+            _step: Is only for optimization and testing. It is the optimal length
+                   of substrings used for initial pre-sorting. The bigger value is
+                   faster if there is enough memory. Memory requirements are
+                   approximately (estimate for 32 bit Python 3.3):
+                       len(text) * (29 + (_size + 20 if _size > 2 else 0)) + 1MB
+        Return value:
+        sa:  Suffix array                  for i in range(1, size):
+               assert text[sa[i-1]:] < text[sa[i]:]
+       """
     tx = text
     size = len(tx)
     step = min(max(_step, 1), len(tx))
     sa = list(range(len(tx)))
     sa.sort(key=lambda i: tx[i:i + step])
-    grpstart = size * [False] + [True]
+    grpstart = size * [False] + [True]  # a boolean map for iteration speedup.
+    # It helps to skip yet resolved values. The last value True is a sentinel.
     rsa = size * [None]
     stgrp, igrp = '', 0
     for i, pos in enumerate(sa):
@@ -60,16 +85,5 @@ def suffix_array(text, _step=1):
                 igrp += len(g)
         step *= 2
     del grpstart
-    lcp = size * [None]
-    h = 0
-    for i in range(size):
-        if rsa[i] > 0:
-            j = sa[rsa[i] - 1]
-            while i != size - h and j != size - h and tx[i + h] == tx[j + h]:
-                h += 1
-            lcp[rsa[i]] = h
-            if h > 0:
-                h -= 1
-    if size > 0:
-        lcp[0] = 0
+
     return sa

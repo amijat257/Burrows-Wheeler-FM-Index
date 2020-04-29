@@ -13,15 +13,6 @@ class SimpleTest(unittest.TestCase):
         self.assertEqual(bw, ['p', 'b', 'i', 'i', 'r', 'z', 'i', 'r', 'r', 'b', 'r', 'e', 'e', '$', 'a', 'g', 'i'])
         self.assertEqual(sa, [16, 3, 2, 6, 14, 12, 8, 1, 5, 7, 10, 15, 13, 0, 4, 9, 11])
 
-    def test_decode(self):
-        """
-        Test decoding bwt encoded string
-        """
-        fm = FMIndex()
-        bw, sa = fm.encode('ribaribigrizerep', sa_step=1, tally_step=1)
-        decoded = fm.decode(bw)
-        self.assertEqual(decoded, 'ribaribigrizerep')
-
     def test_rank_bwt(self):
         """
         Test calculating alphabet ranks of bwt output and character count
